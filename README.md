@@ -1,7 +1,7 @@
 # Amazon Support AI Agent
 **Hiver SDE Intern Take-Home Assignment**
 
-An AI customer support agent for **AmazonHelp** (Twitter) built with LangGraph + Claude API.
+An AI customer support agent for **AmazonHelp** (Twitter) built with LangGraph + Groq API.
 
 ---
 
@@ -33,9 +33,9 @@ An AI customer support agent for **AmazonHelp** (Twitter) built with LangGraph +
 | Component | Tool |
 |-----------|------|
 | Agent pipeline | LangGraph |
-| LLM | Claude API (claude-sonnet-4-6) |
+| LLM | Groq API (llama-3.3-70b-versatile) |
 | Vector store | ChromaDB (local) |
-| Embeddings | all-MiniLM-L6-v2 |
+| Embeddings | all-MiniLM-L6-v2 (local) |
 | API serving | FastAPI |
 
 ---
@@ -45,19 +45,20 @@ An AI customer support agent for **AmazonHelp** (Twitter) built with LangGraph +
 ```
 Amazon-support-agent/
 ├── agent/
-│   └── intents.py          ← 8 intent definitions + prompt builders
+│   └── intents.py               ← 8 intent definitions + prompt builders
 ├── scripts/
 │   └── 01_explore_and_clean.py  ← Data cleaning pipeline
 ├── data/
-│   ├── raw/                ← Raw Kaggle dataset (not in repo)
-│   └── processed/          ← Cleaned outputs (not in repo)
-├── claude.md               ← Full project context and status
+│   ├── raw/                     ← Raw Kaggle dataset (not in repo — too large)
+│   └── processed/               ← Cleaned outputs (not in repo)
+├── .env.example                 ← API key template
+├── requirements.txt             ← Python dependencies
 └── README.md
 ```
 
 ---
 
-## Setup
+## Setup & Reproduce Results
 
 ```bash
 # 1. Clone
@@ -74,30 +75,56 @@ pip install -r requirements.txt
 
 # 4. Set API key
 cp .env.example .env
-# Add your ANTHROPIC_API_KEY in .env
+# Open .env and add your GROQ_API_KEY
 
 # 5. Download dataset
-# Get twcs.csv from: https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter
+# Get twcs.csv from Kaggle:
+# https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter
 # Place at: data/raw/twcs/twcs.csv
 
-# 6. Run data cleaning
+# 6. Run data cleaning (takes ~5 mins)
 python scripts/01_explore_and_clean.py
+# Output: data/processed/amazon_pairs.csv (40,861 pairs)
+#         data/processed/amazon_customers.csv
+#         data/processed/exploration_report.txt
 ```
 
 ---
 
-## Status
+## Data Pipeline
 
-- [x] Step 1 — Data Exploration & Cleaning
-- [x] Step 2 — Intent Definition
-- [ ] Step 3 — Golden Evaluation Set
-- [ ] Step 4 — Agent Pipeline
-- [ ] Step 5 — Baselines
-- [ ] Step 6 — Evaluation Harness
+```
+twcs.csv (2.8M tweets, 516MB)
+        ↓
+Filter AmazonHelp brand rows (169,840)
+        ↓
+Collect customer messages AmazonHelp replied to (154,976)
+        ↓
+Clean: remove @mentions, URLs, emojis, agent codes, non-English
+        ↓
+Filter: English only, min 20 chars, min 4 words, no mid-conversation
+        ↓
+Deduplicate on cleaned text
+        ↓
+40,861 clean (customer, brand_reply) pairs
+```
+
+---
+
+## Progress
+
+- [x] Step 1 — Data Exploration & Cleaning (40,861 clean pairs)
+- [x] Step 2 — Intent Definition (8 intents from 500+ real messages)
+- [ ] Step 3 — Golden Evaluation Set (150-250 hand-labelled examples)
+- [ ] Step 4 — Agent Pipeline (LangGraph 3-node: Classify → Draft → Escalate)
+- [ ] Step 5 — Baselines (Trivial + TF-IDF Simple)
+- [ ] Step 6 — Evaluation Harness (metrics + LLM-as-judge + human agreement)
 
 ---
 
 ## Dataset
 
-**Primary:** [Customer Support on Twitter](https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter) — 2.8M tweets  
-**Brand:** AmazonHelp — 40,861 clean (customer, reply) pairs after filtering
+**Primary:** [Customer Support on Twitter](https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter) — 2.8M tweets, multi-brand  
+**Brand chosen:** AmazonHelp  
+**After cleaning:** 40,861 English-only (customer message, brand reply) pairs  
+**Date range:** April 2017 – September 2017

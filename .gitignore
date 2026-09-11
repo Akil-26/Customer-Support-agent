@@ -6,6 +6,7 @@ data/processed/
 
 # ── Vector store (rebuilt from data) ──────────────────────────────────────
 chroma_db/
+data/chroma/
 
 # ── Environment & secrets ──────────────────────────────────────────────────
 .env
@@ -18,6 +19,7 @@ __pycache__/
 *.pyd
 .Python
 *.egg-info/
+amazon_support_agent.egg-info/
 dist/
 build/
 
@@ -25,6 +27,15 @@ build/
 venv/
 .venv/
 env/
+
+# ── Lock files (not needed — we use requirements.txt) ─────────────────────
+uv.lock
+poetry.lock
+Package-lock.json
+
+# ── Debug scripts (internal use only) ────────────────────────────────────
+scripts/debug_groq.py
+scripts/debug_rag.py
 
 # ── OS files ──────────────────────────────────────────────────────────────
 .DS_Store

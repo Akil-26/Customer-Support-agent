@@ -1,0 +1,20 @@
+{
+  "n_golden_rows": 200,
+  "n_corpus_rows": 40324,
+  "trivial": {
+    "fixed_intent": "other",
+    "fixed_reply": "Sorry for the hassle. Please report this to our support team here: and we'll check this.",
+    "intent_accuracy": 0.13,
+    "escalate_accuracy": 0.88,
+    "escalate_precision": 0.0,
+    "escalate_recall": 0.0,
+    "escalate_f1": 0.0
+  },
+  "simple": {
+    "intent_accuracy": 0.905,
+    "escalate_accuracy": 0.925,
+    "escalate_precision": 0.8462,
+    "escalate_recall": 0.4583,
+    "escalate_f1": 0.5946
+  }
+}

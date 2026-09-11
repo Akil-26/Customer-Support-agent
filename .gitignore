@@ -1,7 +1,8 @@
 # ── Data files (too large for GitHub) ─────────────────────────────────────
 data/raw/
 data/processed/
-data/eval/
+# NOTE: data/eval/ is intentionally NOT ignored — golden_set.csv (143KB) is a
+# required deliverable and small enough to commit.
 
 # ── Vector store (rebuilt from data) ──────────────────────────────────────
 chroma_db/
@@ -32,6 +33,3 @@ desktop.ini
 
 # ── Project context file (internal use only) ─────────────────────────────
 claude.md
-
-# ── Logs ──────────────────────────────────────────────────────────────────
-*.log

@@ -1,0 +1,11 @@
+{
+  "n_golden_rows": 200,
+  "pipeline": {
+    "intent_accuracy": 0.16,
+    "escalate_accuracy": 0.145,
+    "escalate_precision": 0.1192,
+    "escalate_recall": 0.9583,
+    "escalate_f1": 0.212,
+    "n_pipeline_errors": 186
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "n_rows": 200,
+  "systems": {
+    "pipeline_reply": {
+      "label": "Real pipeline",
+      "avg_rouge_l": 0.0045,
+      "avg_embedding_similarity": 0.0111,
+      "n_scored": 200,
+      "n_total": 200
+    }
+  },
+  "rouge_failure_worked_example": {
+    "reference": "No problem! If you don't have a printer, generate your returns label and click on the E-mail to a friend button, this way you can have someone print it on your behalf if possible.",
+    "hypothesis": "Sorry to hear you're having trouble with printing a return label! No printer? No problem! Generate your return label, then email it to a friend or family member who can print it for you. Alternatively, use a public printer at a library. Hope this helps!",
+    "rouge_l": 0.3415,
+    "embedding_similarity": 0.6194,
+    "gap": 0.2779
+  }
+}

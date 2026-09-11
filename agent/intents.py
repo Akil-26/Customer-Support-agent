@@ -38,16 +38,17 @@ INTENTS = [
         "description": (
             "Customer wants to return a product, get a refund, request a replacement, "
             "exchange an item, or is unhappy with the refund amount received. "
-            "Also includes pickup not being arranged for a return."
+            "Also includes pickup not being arranged for a return. "
+            "If the customer says the item arrived broken AND wants to return it, classify as return_refund."
         ),
         "keywords": [
             "return", "refund", "replace", "replacement", "exchange", "money back",
             "send back", "pickup", "pick up", "return policy", "reimburse", "want to return"
         ],
         "examples": [
+            "I want to return this item, it arrived completely broken",
             "The pick up has been arranged 5 times now and cancelled at the last moment without citing any reason!",
             "I purchased redmi4 few functions of phone not working and camera quality not good. Hence dont want to replace this with same product.",
-            "Pur 50 Led TV with extended warranty from Amazon which is giving problem. Unable to talk to someone in Amazon.",
         ],
     },
     {
@@ -194,6 +195,39 @@ def get_few_shot_block() -> str:
             lines.append(f'Intent: {intent["name"]}')
             lines.append("")
     return "\n".join(lines)
+
+
+def candidate_intent_by_keywords(text: str) -> str:
+    """
+    Score `text` against every intent's keyword list and return the
+    highest-overlap intent name, or "other" if nothing matches.
+
+    This is the SAME scoring logic used to build data/eval/golden_set.csv
+    (see golden_set_methodology.md, step 3) -- kept here as the single
+    source of truth so the RAG vector store's intent metadata and the
+    golden set's candidate-intent labels are always computed the same way.
+
+    NOTE: this is a cheap heuristic, not the LLM classifier. It's good
+    enough to bucket 40k rows for retrieval filtering, but it is NOT
+    used as ground truth anywhere in evaluation -- Node 1 (classifier.py)
+    uses the LLM for the actual predicted intent on incoming messages.
+    """
+    if not isinstance(text, str) or not text.strip():
+        return "other"
+
+    text_lower = text.lower()
+    best_name = "other"
+    best_score = 0
+
+    for intent in INTENTS:
+        if not intent["keywords"]:
+            continue
+        score = sum(1 for kw in intent["keywords"] if kw in text_lower)
+        if score > best_score:
+            best_score = score
+            best_name = intent["name"]
+
+    return best_name
 
 
 if __name__ == "__main__":
